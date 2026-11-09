@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TinyPulse-412 | ATtiny412 8-Pin Pocket Synth &amp; KiCad PCB Inspector</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <span class="chip-badge">ATtiny412-SSNR (SOIC-8)</span>
+        <h1>TinyPulse-412</h1>
+        <span class="subtitle">20 MHz 8-Pin Pocket Chiptune Synth, BPM Metronome &amp; KiCad 8 Hardware Design</span>
+      </div>
+      <div class="grant-badges">
+        <a href="hardware/tinypulse-412-oshpark.zip" class="btn btn-primary" download>Download OSH Park Gerbers (.zip)</a>
+        <a href="hardware/tinypulse-412-pcbway.zip" class="btn btn-secondary" download>Download PCBWay Gerbers (.zip)</a>
+        <a href="hardware/bom.csv" class="btn btn-outline" download>BOM (.csv)</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <!-- Left Column: Interactive KiCad 2-Layer PCB Viewer -->
+    <section class="card pcb-card">
+      <div class="card-header">
+        <div>
+          <h2>Interactive 2-Layer PCB Layout Inspector (38.0 x 25.0 mm)</h2>
+          <p class="muted">1.47 sq in | $7.35 for 3 Boards on OSH Park 2-Layer / After Dark | 6 mil Min Track/Space</p>
+        </div>
+        <div class="substrate-toggle">
+          <label for="themeSelect">Solder Mask Finish:</label>
+          <select id="themeSelect">
+            <option value="afterdark">OSH Park After Dark (Clear/Black)</option>
+            <option value="purple">OSH Park Classic Purple</option>
+            <option value="pcbway">PCBWay Matte Black (Sponsored)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="layer-controls" role="group" aria-label="PCB Layer Toggles">
+        <label class="layer-pill fcu"><input type="checkbox" data-layer="F.Cu" checked /> <span>F.Cu (Top Copper)</span></label>
+        <label class="layer-pill bcu"><input type="checkbox" data-layer="B.Cu" checked /> <span>B.Cu (Back Copper)</span></label>
+        <label class="layer-pill fsilk"><input type="checkbox" data-layer="F.SilkS" checked /> <span>F.SilkS + Clip Keepout</span></label>
+        <label class="layer-pill bsilk"><input type="checkbox" data-layer="B.SilkS" checked /> <span>B.SilkS (PCBWay Mark)</span></label>
+        <label class="layer-pill edge"><input type="checkbox" data-layer="Edge.Cuts" checked /> <span>Edge.Cuts (38x25mm)</span></label>
+      </div>
+
+      <div class="net-controls">
+        <span class="net-label">Highlight Net:</span>
+        <button class="net-btn active" data-net="ALL">All Nets</button>
+        <button class="net-btn" data-net="VDD">VDD (+3V)</button>
+        <button class="net-btn" data-net="GND">GND</button>
+        <button class="net-btn" data-net="PA0_UPDI">PA0 / UPDI</button>
+        <button class="net-btn" data-net="PA1_SDA">PA1 / SDA</button>
+        <button class="net-btn" data-net="PA2_SCL">PA2 / SCL</button>
+        <button class="net-btn" data-net="PA3_BUZZER">PA3 / PWM</button>
+        <button class="net-btn" data-net="PA6_BTN1">PA6 (SW1+D1)</button>
+        <button class="net-btn" data-net="PA7_BTN2">PA7 (SW2+D2)</button>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="pcbCanvas" width="760" height="500" aria-label="Interactive KiCad PCB Layout Canvas"></canvas>
+      </div>
+
+      <div class="drc-strip">
+        <div class="drc-item"><span class="status-dot ok"></span> <strong>DRC Violations:</strong> 0 Errors, 0 Unrouted Nets</div>
+        <div class="drc-item"><strong>Power Trace:</strong> 0.35 mm (13.8 mil)</div>
+        <div class="drc-item"><strong>Signal Trace:</strong> 0.25 mm (9.8 mil)</div>
+        <div class="drc-item"><strong>SOIC-8 Clip Keepout:</strong> 9.0 x 6.6 mm Clear Zone</div>
+      </div>
+    </section>
+
+    <!-- Right Column: Live ATtiny412 Hardware Simulator -->
+    <section class="card sim-card">
+      <div class="card-header">
+        <div>
+          <h2>Live ATtiny412 Register &amp; Audio Simulator</h2>
+          <p class="muted">Cycle-accurate TCA0 Frequency Waveform Generator + Time-Multiplexed PA6/PA7 GPIO</p>
+        </div>
+        <button id="audioToggleBtn" class="btn btn-accent">Enable WebAudio Synth</button>
+      </div>
+
+      <!-- Simulated 128x64 SSD1306 I2C OLED Screen -->
+      <div class="oled-bezel">
+        <div class="oled-header">J2: SSD1306 128x64 I2C OLED (Addr 0x3C | PA1=SDA, PA2=SCL)</div>
+        <canvas id="oledCanvas" width="256" height="128"></canvas>
+      </div>
+
+      <!-- Simulated Hardware Tactile Buttons & LEDs -->
+      <div class="hw-controls">
+        <div class="mux-channel">
+          <div class="led-indicator" id="led1Indicator">
+            <span class="led-bulb" id="led1Bulb"></span>
+            <span>D1 (Beat Sync LED on PA6)</span>
+          </div>
+          <button id="sw1Btn" class="tactile-btn">Press SW1 (PA6): Step Pitch Note</button>
+        </div>
+        <div class="mux-channel">
+          <div class="led-indicator" id="led2Indicator">
+            <span class="led-bulb" id="led2Bulb"></span>
+            <span>D2 (Synth Gate LED on PA7)</span>
+          </div>
+          <button id="sw2Btn" class="tactile-btn">Press SW2 (PA7): Cycle BPM Tempo</button>
+        </div>
+      </div>
+
+      <!-- Live ATtiny412 Special Function Registers -->
+      <div class="register-grid">
+        <div class="reg-box">
+          <span class="reg-name">TCA0.SINGLE.CMP0</span>
+          <code id="regCmp0">0x0162 (354)</code>
+          <span class="reg-desc" id="regFreqDesc">Output: 440.1 Hz (A4)</span>
+        </div>
+        <div class="reg-box">
+          <span class="reg-name">TCA0.SINGLE.CTRLB</span>
+          <code>0x11 (CMP0EN | FRQ)</code>
+          <span class="reg-desc">PA3 Hardware Toggle</span>
+        </div>
+        <div class="reg-box">
+          <span class="reg-name">PORTA.DIR / OUT</span>
+          <code id="regPorta">DIR=0xC8 OUT=0x40</code>
+          <span class="reg-desc">TDM 1 kHz Scan Active</span>
+        </div>
+        <div class="reg-box">
+          <span class="reg-name">TWI0.MBAUD / MSTATUS</span>
+          <code>MBAUD=20 (100 kHz)</code>
+          <span class="reg-desc">Zero-RAM Tile Stream</span>
+        </div>
+      </div>
+
+      <!-- 8-Pin SOIC Pinout Reference Table -->
+      <div class="pinout-box">
+        <h3>ATtiny412-SSNR 8-Pin SOIC Multiplexing Map</h3>
+        <table class="compact-table">
+          <thead>
+            <tr>
+              <th>SOIC Pin</th>
+              <th>Port</th>
+              <th>Net Name</th>
+              <th>Hardware Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Pin 1</td><td>VDD</td><td><code>VDD</code></td><td>+3.0V CR2032 (BT1) + 100nF X7R Decoupling (C1)</td></tr>
+            <tr><td>Pin 2</td><td>PA6</td><td><code>PA6_BTN1</code></td><td>TDM Shared: SW1 Pitch Button + D1 Beat LED (330R)</td></tr>
+            <tr><td>Pin 3</td><td>PA7</td><td><code>PA7_BTN2</code></td><td>TDM Shared: SW2 Tempo Button + D2 Gate LED (330R)</td></tr>
+            <tr><td>Pin 4</td><td>PA1</td><td><code>PA1_SDA</code></td><td>Hardware TWI0 I2C Data to J2 OLED (4.7k Pull-Up R1)</td></tr>
+            <tr><td>Pin 5</td><td>PA2</td><td><code>PA2_SCL</code></td><td>Hardware TWI0 I2C Clock to J2 OLED (4.7k Pull-Up R2)</td></tr>
+            <tr><td>Pin 6</td><td>PA0</td><td><code>PA0_UPDI</code></td><td>Single-Wire UPDI Programming &amp; Debug Header (J1)</td></tr>
+            <tr><td>Pin 7</td><td>PA3</td><td><code>PA3_BUZZER</code></td><td>TCA0 WO0 Hardware Frequency PWM to Piezo (BZ1)</td></tr>
+            <tr><td>Pin 8</td><td>GND</td><td><code>GND</code></td><td>System Ground Plane</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Section: Grant Budget & Verified DigiKey BOM -->
+  <section class="container bom-section card">
+    <div class="card-header">
+      <div>
+        <h2>Verified DigiKey &amp; OSH Park Bill of Materials (3 Complete Boards)</h2>
+        <p class="muted">Compliant with Hack Club 8-Pin Grant ($35.00 max budget) &amp; PCBWay Student Sponsorship</p>
+      </div>
+      <div class="budget-summary">
+        <div class="stat-pill"><span>Parts (3 Boards):</span> <strong>$16.80</strong></div>
+        <div class="stat-pill"><span>OSH Park PCB (3 Boards):</span> <strong>$7.35</strong></div>
+        <div class="stat-pill highlight"><span>Total Grant Request:</span> <strong id="totalCostDisplay">$24.15 / $35.00</strong></div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="bom-table" id="bomTable">
+        <thead>
+          <tr>
+            <th>RefDes</th>
+            <th>Qty (1x)</th>
+            <th>Qty (3x)</th>
+            <th>Component Description</th>
+            <th>Manufacturer Part Number</th>
+            <th>Supplier</th>
+            <th>Package</th>
+            <th>Unit ($)</th>
+            <th>Ext 3 Boards ($)</th>
+          </tr>
+        </thead>
+        <tbody id="bomTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="container footer">
+    <p>Designed by <strong>Aariv Patel</strong> (<a href="https://github.com/draarivpatel-ui/tinypulse-412">github.com/draarivpatel-ui/tinypulse-412</a>) | KiCad 8 Hardware, RS-274X Gerbers, Bare-Metal AVR-GCC C11 Firmware &amp; OpenSCAD 3D Enclosure</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

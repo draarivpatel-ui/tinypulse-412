@@ -1,0 +1,13 @@
+Reference,Quantity,Qty_3_Boards,Description,Part Number,Manufacturer,Supplier,Supplier_PN,Package,Unit_Price_USD,Ext_Price_3_Boards_USD
+U1,1,3,8-Bit AVR tinyAVR-1 MCU 20MHz 4KB Flash 256B SRAM UPDI,ATTINY412-SSNR,Microchip Technology,DigiKey,ATTINY412-SSNRCT-ND,SOIC-8,0.68,2.04
+C1,1,3,100nF 50V X7R Ceramic Decoupling Capacitor,CL21B104KBCNNNC,Samsung Electro-Mechanics,DigiKey,1276-1003-1-ND,0805,0.10,0.30
+R1;R2,2,6,4.7k Ohm 1% 1/8W Thick Film I2C Pull-Up Resistor,RC0805FR-074K7L,YAGEO,DigiKey,311-4.70KCRCT-ND,0805,0.10,0.60
+R3;R4,2,6,330 Ohm 1% 1/8W Thick Film LED Current-Limiting Resistor,RC0805FR-07330RL,YAGEO,DigiKey,311-330CRCT-ND,0805,0.10,0.60
+D1;D2,2,6,Super Red 631nm Indicator LED 20mA,LTST-C170KRKT,Lite-On Inc.,DigiKey,160-1415-1-ND,0805,0.18,1.08
+SW1;SW2,2,6,6.0mm x 6.0mm SMD Tactile Pushbutton Switch 160gf,PTS645SM43SMTR92LFS,C&K,DigiKey,CKN9112CT-ND,SMD-4,0.28,1.68
+BZ1,1,3,9.0mm Magnetic Piezo Audio Transducer 4kHz PWM,ABI-009-RC,Pro Signal / Mallory,DigiKey,458-1005-ND,TH-9mm,1.35,4.05
+BT1,1,3,CR2032 20mm Coin Cell Battery Retainer Holder,BS-7,Memory Protection Devices,DigiKey,BS-7-ND,TH-CR2032,0.75,2.25
+J1,1,3,3-Pin 2.54mm Pitch Vertical UPDI Programming Header,PRPC003SAAN-RC,Sullins Connector Solutions,DigiKey,S1011EC-03-ND,1x03-2.54mm,0.25,0.75
+J2,1,3,4-Pin 2.54mm Pitch I2C OLED Socket Header,PRPC004SAAN-RC,Sullins Connector Solutions,DigiKey,S1011EC-04-ND,1x04-2.54mm,0.35,1.05
+MOD1,1,1,0.96 inch 128x64 SSD1306 I2C OLED Display Module,SSD1306-128X64-I2C,Generic / Solomon Systech,DigiKey,1528-2704-ND,Module-4Pin,2.40,2.40
+PCB1,1,3,OSH Park 2-Layer Purple / After Dark PCB (38.0x25.0mm = 1.47 sq in),TINYPULSE-412-PCB,OSH Park,OSH Park,OSH-2L-147SQIN,38x25mm,2.45,7.35
