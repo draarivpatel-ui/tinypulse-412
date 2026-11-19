@@ -4,9 +4,7 @@ Generator for TinyPulse-412 KiCad 8 files, RS-274X Gerbers, Excellon Drill,
 OSH Park / PCBWay fabrication archives, BOM CSV, and 3D Enclosure STL.
 """
 import json
-import math
 import os
-import struct
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
