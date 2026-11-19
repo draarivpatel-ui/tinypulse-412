@@ -73,15 +73,6 @@ typedef struct {
     volatile uint8_t MDATA;
 } TWI_t;
 
-typedef struct {
-    volatile uint8_t CTRLA;
-    volatile uint8_t CTRLB;
-    volatile uint8_t INTCTRL;
-    volatile uint8_t INTFLAGS;
-    volatile uint16_t CNT;
-    volatile uint16_t CCMP;
-} TCB_t;
-
 static PORT_t PORTA;
 static TCA_t TCA0;
 static TWI_t TWI0;
@@ -98,9 +89,6 @@ static TWI_t TWI0;
 
 #define SSD1306_I2C_ADDR  0x78  /* 0x3C << 1 */
 
-#define PIN_UPDI_bm       (1 << 0) /* PA0 */
-#define PIN_SDA_bm        (1 << 1) /* PA1 */
-#define PIN_SCL_bm        (1 << 2) /* PA2 */
 #define PIN_BUZZER_bm     (1 << 3) /* PA3 (TCA0 WO0 via PORTMUX) */
 #define PIN_MUX_A_bm      (1 << 6) /* PA6: SW1 + D1 */
 #define PIN_MUX_B_bm      (1 << 7) /* PA7: SW2 + D2 */
