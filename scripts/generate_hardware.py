@@ -188,6 +188,68 @@ kicad_sch = """(kicad_sch
         (pin passive line (at 3.81 0 180) (length 2.54) (name "A") (number "2"))
       )
     )
+    (symbol "Device:SW_Push"
+      (pin_numbers hide) (in_bom yes) (on_board yes)
+      (property "Reference" "SW" (at 0 3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "SW_Push" (at 0 -3.81 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "SW_Push_1_1"
+        (circle (center -2.54 0) (radius 0.508) (stroke (width 0) (type default)) (fill (type none)))
+        (circle (center 2.54 0) (radius 0.508) (stroke (width 0) (type default)) (fill (type none)))
+        (polyline (pts (xy -3.175 1.778) (xy 3.175 3.302)) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive line (at -5.08 0 0) (length 2.54) (name "1") (number "1"))
+        (pin passive line (at 5.08 0 180) (length 2.54) (name "2") (number "2"))
+      )
+    )
+    (symbol "Device:Buzzer"
+      (pin_numbers hide) (in_bom yes) (on_board yes)
+      (property "Reference" "BZ" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "Buzzer" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Buzzer_1_1"
+        (arc (start 0 -2.286) (mid 2.286 0) (end 0 2.286) (stroke (width 0.254) (type default)) (fill (type none)))
+        (arc (start 0 -3.81) (mid 3.81 0) (end 0 3.81) (stroke (width 0.254) (type default)) (fill (type none)))
+        (pin passive line (at -5.08 1.27 0) (length 2.54) (name "+") (number "1"))
+        (pin passive line (at -5.08 -1.27 0) (length 2.54) (name "-") (number "2"))
+      )
+    )
+    (symbol "Device:Battery"
+      (pin_numbers hide) (in_bom yes) (on_board yes)
+      (property "Reference" "BT" (at 2.54 2.54 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Value" "Battery" (at 2.54 0 0) (effects (font (size 1.27 1.27)) (justify left)))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Battery_1_1"
+        (polyline (pts (xy 0 -1.524) (xy 0 -0.508)) (stroke (width 0.508) (type default)) (fill (type none)))
+        (polyline (pts (xy 0 0.508) (xy 0 1.524)) (stroke (width 0.1524) (type default)) (fill (type none)))
+        (pin passive line (at 0 3.81 270) (length 2.286) (name "+") (number "1"))
+        (pin passive line (at 0 -3.81 90) (length 2.286) (name "-") (number "2"))
+      )
+    )
+    (symbol "Connector:Conn_01x03_Male"
+      (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
+      (property "Reference" "J" (at 0 5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "Conn_01x03_Male" (at 0 -5.08 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_01x03_Male_1_1"
+        (rectangle (start -1.27 3.81) (end 1.27 -3.81) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin passive line (at -3.81 2.54 0) (length 2.54) (name "Pin_1") (number "1"))
+        (pin passive line (at -3.81 0 0) (length 2.54) (name "Pin_2") (number "2"))
+        (pin passive line (at -3.81 -2.54 0) (length 2.54) (name "Pin_3") (number "3"))
+      )
+    )
+    (symbol "Connector:Conn_01x04_Male"
+      (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
+      (property "Reference" "J" (at 0 6.35 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "Conn_01x04_Male" (at 0 -6.35 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "Conn_01x04_Male_1_1"
+        (rectangle (start -1.27 5.08) (end 1.27 -5.08) (stroke (width 0.254) (type default)) (fill (type background)))
+        (pin passive line (at -3.81 3.81 0) (length 2.54) (name "Pin_1") (number "1"))
+        (pin passive line (at -3.81 1.27 0) (length 2.54) (name "Pin_2") (number "2"))
+        (pin passive line (at -3.81 -1.27 0) (length 2.54) (name "Pin_3") (number "3"))
+        (pin passive line (at -3.81 -3.81 0) (length 2.54) (name "Pin_4") (number "4"))
+      )
+    )
   )
   (symbol (lib_id "MCU_Microchip_ATtiny:ATtiny412-SS") (at 139.7 96.52 0) (unit 1)
     (in_bom yes) (on_board yes)
@@ -253,6 +315,54 @@ kicad_sch = """(kicad_sch
     (property "Footprint" "LED_SMD:LED_0805_2012Metric" (at 124.46 124.46 0) (effects (font (size 1.27 1.27)) hide))
     (property "Part Number" "LTST-C170KRKT" (at 124.46 124.46 0) (effects (font (size 1.27 1.27)) hide))
   )
+  (symbol (lib_id "Device:SW_Push") (at 114.3 134.62 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550009")
+    (property "Reference" "SW1" (at 114.3 129.54 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "PTS645" (at 114.3 139.7 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645" (at 114.3 134.62 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "PTS645SM43SMTR92LFS" (at 114.3 134.62 0) (effects (font (size 1.27 1.27)) hide))
+  )
+  (symbol (lib_id "Device:SW_Push") (at 124.46 134.62 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550010")
+    (property "Reference" "SW2" (at 124.46 129.54 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "PTS645" (at 124.46 139.7 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645" (at 124.46 134.62 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "PTS645SM43SMTR92LFS" (at 124.46 134.62 0) (effects (font (size 1.27 1.27)) hide))
+  )
+  (symbol (lib_id "Device:Buzzer") (at 170.18 104.14 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550011")
+    (property "Reference" "BZ1" (at 170.18 99.06 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "ABI-009-RC" (at 170.18 109.22 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Buzzer_Beeper:MagneticBuzzer_ProSignal_ABI-009-RC" (at 170.18 104.14 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "ABI-009-RC" (at 170.18 104.14 0) (effects (font (size 1.27 1.27)) hide))
+  )
+  (symbol (lib_id "Device:Battery") (at 114.3 144.78 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550012")
+    (property "Reference" "BT1" (at 116.84 144.78 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "BS-7_CR2032" (at 116.84 147.32 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Footprint" "Battery:BatteryHolder_Keystone_3000_1x12mm" (at 114.3 144.78 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "BS-7" (at 114.3 144.78 0) (effects (font (size 1.27 1.27)) hide))
+  )
+  (symbol (lib_id "Connector:Conn_01x03_Male") (at 177.8 114.3 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550013")
+    (property "Reference" "J1" (at 177.8 109.22 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "UPDI_3P" (at 177.8 119.38 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" (at 177.8 114.3 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "PRPC003SAAN-RC" (at 177.8 114.3 0) (effects (font (size 1.27 1.27)) hide))
+  )
+  (symbol (lib_id "Connector:Conn_01x04_Male") (at 190.5 114.3 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid "11111111-2222-3333-4444-555555550014")
+    (property "Reference" "J2" (at 190.5 107.95 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "OLED_I2C" (at 190.5 120.65 0) (effects (font (size 1.27 1.27))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 190.5 114.3 0) (effects (font (size 1.27 1.27)) hide))
+    (property "Part Number" "PRPC004SAAN-RC" (at 190.5 114.3 0) (effects (font (size 1.27 1.27)) hide))
+  )
   (wire (pts (xy 114.3 92.71) (xy 139.7 83.82)) (stroke (width 0) (type default)) (uuid "22222222-0000-0000-0000-000000000001"))
   (wire (pts (xy 114.3 100.33) (xy 139.7 109.22)) (stroke (width 0) (type default)) (uuid "22222222-0000-0000-0000-000000000002"))
   (wire (pts (xy 149.86 91.44) (xy 162.56 92.71)) (stroke (width 0) (type default)) (uuid "22222222-0000-0000-0000-000000000003"))
@@ -263,6 +373,21 @@ kicad_sch = """(kicad_sch
   (label "PA3_PWM_BUZZER" (at 152.4 99.06 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-000000000004"))
   (label "PA6_BTN_A_LED1" (at 124.46 91.44 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-000000000005"))
   (label "PA7_BTN_B_LED2" (at 124.46 93.98 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-000000000006"))
+  (label "PA6_BTN1" (at 109.22 134.62 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000007"))
+  (label "GND" (at 119.38 134.62 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-000000000008"))
+  (label "PA7_BTN2" (at 119.38 134.62 180) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000009"))
+  (label "GND" (at 129.54 134.62 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-00000000000a"))
+  (label "PA3_BUZZER" (at 165.1 105.41 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-00000000000b"))
+  (label "GND" (at 165.1 102.87 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-00000000000c"))
+  (label "VDD" (at 114.3 140.97 0) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "33333333-0000-0000-0000-00000000000d"))
+  (label "GND" (at 114.3 148.59 0) (effects (font (size 1.27 1.27)) (justify left top)) (uuid "33333333-0000-0000-0000-00000000000e"))
+  (label "PA0_UPDI" (at 173.99 116.84 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-00000000000f"))
+  (label "VDD" (at 173.99 114.3 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000010"))
+  (label "GND" (at 173.99 111.76 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000011"))
+  (label "GND" (at 186.69 118.11 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000012"))
+  (label "VDD" (at 186.69 115.57 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000013"))
+  (label "PA2_SCL" (at 186.69 113.03 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000014"))
+  (label "PA1_SDA" (at 186.69 110.49 0) (effects (font (size 1.27 1.27)) (justify right bottom)) (uuid "33333333-0000-0000-0000-000000000015"))
   (sheet_instances
     (path "/" (page "1"))
   )
@@ -567,6 +692,8 @@ def write_gerber(filename, layer_code, polarity, commands):
         f"%ADD14R,1.000000X1.300000*%",
         f"%ADD15C,1.700000*%",
         f"%ADD16C,2.200000*%",
+        f"%ADD17R,1.500000X1.300000*%",
+        f"%ADD18C,1.600000*%",
     ]
     footer = ["M02*"]
     with open(os.path.join(GERBER_DIR, filename), "w") as f:
@@ -585,52 +712,83 @@ edge_cmds = [
 ]
 write_gerber("tinypulse-412-Edge_Cuts.gm1", "Profile,NP", "Positive", edge_cmds)
 
-# F.Cu pads & tracks
-fcu_cmds = [
-    "D13*",
-    f"X{mm_to_gerber(116.3)}Y{mm_to_gerber(-110.595)}D03*",
-    f"X{mm_to_gerber(116.3)}Y{mm_to_gerber(-111.865)}D03*",
-    f"X{mm_to_gerber(116.3)}Y{mm_to_gerber(-113.135)}D03*",
-    f"X{mm_to_gerber(116.3)}Y{mm_to_gerber(-114.405)}D03*",
-    f"X{mm_to_gerber(121.7)}Y{mm_to_gerber(-114.405)}D03*",
-    f"X{mm_to_gerber(121.7)}Y{mm_to_gerber(-113.135)}D03*",
-    f"X{mm_to_gerber(121.7)}Y{mm_to_gerber(-111.865)}D03*",
-    f"X{mm_to_gerber(121.7)}Y{mm_to_gerber(-110.595)}D03*",
-    "D14*",
-    f"X{mm_to_gerber(118.05)}Y{mm_to_gerber(-106.5)}D03*",
-    f"X{mm_to_gerber(119.95)}Y{mm_to_gerber(-106.5)}D03*",
-    "D15*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-110.0)}D03*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-112.54)}D03*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-115.08)}D03*",
-    "D12*",
-    f"X{mm_to_gerber(116.3)}Y{mm_to_gerber(-110.595)}D02*",
-    f"X{mm_to_gerber(118.05)}Y{mm_to_gerber(-106.5)}D01*",
-    f"X{mm_to_gerber(117.73)}Y{mm_to_gerber(-103.5)}D01*",
-    "D11*",
-    f"X{mm_to_gerber(121.7)}Y{mm_to_gerber(-113.135)}D02*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-110.0)}D01*",
+def gcoord(x, y):
+    # Gerber coordinate pair; the plot negates Y for KiCad's coordinate system.
+    return f"X{mm_to_gerber(x)}Y{mm_to_gerber(-y)}"
+
+# Every pad in tinypulse-412.kicad_pcb, resolved to absolute board coords
+# (footprint origin + pad offset; no rotated footprints on this board).
+SMD_PADS = [  # F.Cu / F.Paste / F.Mask
+    # U1 SOIC-8 at (119.0, 112.5), pads at x=+-2.7, y=-1.905..1.905 step 1.27
+    ("D13", [(116.3, 110.595), (116.3, 111.865), (116.3, 113.135), (116.3, 114.405),
+             (121.7, 114.405), (121.7, 113.135), (121.7, 111.865), (121.7, 110.595)]),
+    # 0805 pads (1.0 x 1.3): C1, R1, R2, R3, R4, D1, D2 at +-0.95 around origin
+    ("D14", [(118.05, 106.5), (119.95, 106.5),      # C1 (119.0, 106.5)
+             (113.55, 117.8), (115.45, 117.8),     # R1 (114.5, 117.8)
+             (122.55, 117.8), (124.45, 117.8),     # R2 (123.5, 117.8)
+             (107.55, 107.0), (109.45, 107.0),     # R3 (108.5, 107.0)
+             (107.55, 111.0), (109.45, 111.0),     # R4 (108.5, 111.0)
+             (102.55, 107.0), (104.45, 107.0),     # D1 (103.5, 107.0)
+             (102.55, 111.0), (104.45, 111.0)]),   # D2 (103.5, 111.0)
+    # PTS645 switch pads (1.5 x 1.3) at +-3.25 / +-2.25: SW1, SW2
+    ("D17", [(102.75, 117.25), (109.25, 117.25),
+             (102.75, 121.75), (109.25, 121.75),   # SW1 (106.0, 119.5)
+             (128.75, 117.25), (135.25, 117.25),
+             (128.75, 121.75), (135.25, 121.75)]), # SW2 (132.0, 119.5)
 ]
+TH_PADS = [  # *.Cu / *.Mask: flashed on both copper layers
+    ("D15", [(134.5, 110.0), (134.5, 112.54), (134.5, 115.08),          # J1 1x03 (134.5, 110.0)
+             (115.19, 103.5), (117.73, 103.5),
+             (120.27, 103.5), (122.81, 103.5)]),                      # J2 1x04 (115.19, 103.5)
+    ("D18", [(126.0, 107.0), (131.0, 107.0)]),                        # BZ1 (128.5, 107.0) +-2.5
+    ("D16", [(108.8, 113.0), (129.2, 113.0)]),                        # BT1 (119.0, 113.0) +-10.2
+]
+FCU_SEGMENTS = [  # all "F.Cu" segments in tinypulse-412.kicad_pcb, 0.35 = D12, 0.25 = D11
+    ("D12", (116.3, 110.595, 118.05, 106.5)),
+    ("D12", (118.05, 106.5, 117.73, 103.5)),
+    ("D12", (121.7, 110.595, 119.95, 106.5)),
+    ("D11", (121.7, 113.135, 134.5, 110.0)),
+    ("D11", (116.3, 114.405, 115.45, 117.8)),
+    ("D11", (121.7, 114.405, 122.55, 117.8)),
+    ("D11", (122.55, 117.8, 120.27, 103.5)),
+    ("D11", (121.7, 111.865, 126.0, 107.0)),
+    ("D11", (116.3, 111.865, 107.55, 107.0)),
+    ("D11", (107.55, 107.0, 109.25, 117.25)),
+    ("D11", (116.3, 113.135, 107.55, 111.0)),
+    ("D11", (109.45, 107.0, 104.45, 107.0)),
+    ("D11", (109.45, 111.0, 104.45, 111.0)),
+]
+BCU_SEGMENTS = [  # all "B.Cu" segments
+    ("D11", (115.45, 117.8, 122.81, 103.5)),
+    ("D11", (107.55, 111.0, 128.75, 117.25)),
+]
+
+def pad_commands(pad_groups):
+    cmds = []
+    for aperture, points in pad_groups:
+        cmds.append(f"{aperture}*")
+        cmds.extend(f"{gcoord(x, y)}D03*" for x, y in points)
+    return cmds
+
+def segment_commands(segments):
+    cmds = []
+    for aperture, (x1, y1, x2, y2) in segments:
+        cmds += [f"{aperture}*", f"{gcoord(x1, y1)}D02*", f"{gcoord(x2, y2)}D01*"]
+    return cmds
+
+# F.Cu: SMD + thru-hole pads, then every front segment (13)
+fcu_cmds = pad_commands(SMD_PADS) + pad_commands(TH_PADS) + segment_commands(FCU_SEGMENTS)
 write_gerber("tinypulse-412-F_Cu.gtl", "Copper,L1,Top", "Positive", fcu_cmds)
 
-# B.Cu pads & tracks
-bcu_cmds = [
-    "D15*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-110.0)}D03*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-112.54)}D03*",
-    f"X{mm_to_gerber(134.5)}Y{mm_to_gerber(-115.08)}D03*",
-    "D16*",
-    f"X{mm_to_gerber(108.8)}Y{mm_to_gerber(-113.0)}D03*",
-    f"X{mm_to_gerber(129.2)}Y{mm_to_gerber(-113.0)}D03*",
-    "D11*",
-    f"X{mm_to_gerber(115.45)}Y{mm_to_gerber(-117.8)}D02*",
-    f"X{mm_to_gerber(122.81)}Y{mm_to_gerber(-103.5)}D01*",
-]
+# B.Cu: thru-hole pads (both layers) + every back segment (2)
+bcu_cmds = pad_commands(TH_PADS) + segment_commands(BCU_SEGMENTS)
 write_gerber("tinypulse-412-B_Cu.gbl", "Copper,L2,Bot", "Positive", bcu_cmds)
 
-# F.Mask & B.Mask
-write_gerber("tinypulse-412-F_Mask.gts", "Soldermask,Top", "Negative", fcu_cmds[:15])
-write_gerber("tinypulse-412-B_Mask.gbs", "Soldermask,Bot", "Negative", bcu_cmds[:7])
+# Solder mask openings over pads only; tracks never belong in the mask layer
+write_gerber("tinypulse-412-F_Mask.gts", "Soldermask,Top", "Negative",
+             pad_commands(SMD_PADS) + pad_commands(TH_PADS))
+write_gerber("tinypulse-412-B_Mask.gbs", "Soldermask,Bot", "Negative",
+             pad_commands(TH_PADS))
 
 # F.SilkS & B.SilkS
 fsilk_cmds = [
@@ -707,7 +865,7 @@ for zip_name in ["tinypulse-412-oshpark.zip", "tinypulse-412-pcbway.zip"]:
             zf.write(os.path.join(HW_DIR, "tinypulse-412.kicad_pcb"), arcname="tinypulse-412.kicad_pcb")
 
 # 5. DigiKey / Mouser BOM CSV (hardware/bom.csv)
-# Total parts for 3 boards = $16.80 + OSH Park 3 boards ($7.35) = $24.15 (< $35.00 Hack Club 8-Pin Grant budget)
+# Total parts for 3 boards = $21.60 + OSH Park 3 boards ($7.35) = $28.95 (< $35.00 Hack Club 8-Pin Grant budget)
 bom_csv = """Reference,Quantity,Qty_3_Boards,Description,Part Number,Manufacturer,Supplier,Supplier_PN,Package,Unit_Price_USD,Ext_Price_3_Boards_USD
 U1,1,3,8-Bit AVR tinyAVR-1 MCU 20MHz 4KB Flash 256B SRAM UPDI,ATTINY412-SSNR,Microchip Technology,DigiKey,ATTINY412-SSNRCT-ND,SOIC-8,0.68,2.04
 C1,1,3,100nF 50V X7R Ceramic Decoupling Capacitor,CL21B104KBCNNNC,Samsung Electro-Mechanics,DigiKey,1276-1003-1-ND,0805,0.10,0.30
@@ -719,7 +877,7 @@ BZ1,1,3,9.0mm Magnetic Piezo Audio Transducer 4kHz PWM,ABI-009-RC,Pro Signal / M
 BT1,1,3,CR2032 20mm Coin Cell Battery Retainer Holder,BS-7,Memory Protection Devices,DigiKey,BS-7-ND,TH-CR2032,0.75,2.25
 J1,1,3,3-Pin 2.54mm Pitch Vertical UPDI Programming Header,PRPC003SAAN-RC,Sullins Connector Solutions,DigiKey,S1011EC-03-ND,1x03-2.54mm,0.25,0.75
 J2,1,3,4-Pin 2.54mm Pitch I2C OLED Socket Header,PRPC004SAAN-RC,Sullins Connector Solutions,DigiKey,S1011EC-04-ND,1x04-2.54mm,0.35,1.05
-MOD1,1,1,0.96 inch 128x64 SSD1306 I2C OLED Display Module,SSD1306-128X64-I2C,Generic / Solomon Systech,DigiKey,1528-2704-ND,Module-4Pin,2.40,2.40
+MOD1,1,3,0.96 inch 128x64 SSD1306 I2C OLED Display Module,SSD1306-128X64-I2C,Generic / Solomon Systech,DigiKey,1528-2704-ND,Module-4Pin,2.40,7.20
 PCB1,1,3,OSH Park 2-Layer Purple / After Dark PCB (38.0x25.0mm = 1.47 sq in),TINYPULSE-412-PCB,OSH Park,OSH Park,OSH-2L-147SQIN,38x25mm,2.45,7.35
 """
 with open(os.path.join(HW_DIR, "bom.csv"), "w") as f:

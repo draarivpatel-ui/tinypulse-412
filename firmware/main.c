@@ -20,6 +20,7 @@
 #ifdef __AVR__
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/cpufunc.h>
 #include <util/delay.h>
 #else
 /* Host simulation definitions for unit testing and desktop compilation checks */
@@ -82,9 +83,20 @@ typedef struct {
     volatile uint16_t CCMP;
 } TCB_t;
 
+typedef struct {
+    volatile uint8_t MCLKCTRLA;
+    volatile uint8_t MCLKCTRLB;
+    volatile uint8_t MCLKLOCK;
+    volatile uint8_t MCLKSTATUS;
+} CLKCTRL_t;
+
 static PORT_t PORTA;
 static TCA_t TCA0;
 static TWI_t TWI0;
+static CLKCTRL_t CLKCTRL;
+#define _PROTECTED_WRITE(reg, val) ((reg) = (val))
+#define CLKCTRL_PEN_bm 0x01
+#define CLKCTRL_PDIV_4X_gc (0x02 << 1)
 #define PORT_PULLUPEN_bm 0x08
 #define TCA_SINGLE_CLKSEL_DIV16_gc (0x04 << 1)
 #define TCA_SINGLE_ENABLE_bm 0x01
@@ -108,14 +120,14 @@ static TWI_t TWI0;
 /* Equal-tempered pentatonic + chiptune scale lookup: TCA0 CMP0 values at F_CPU = 5 MHz, DIV16 */
 /* f_tone = (5,000,000 / 16) / (2 * (CMP0 + 1)) = 156,250 / (CMP0 + 1) */
 static const uint16_t SCALE_CMP0[8] = {
-    595, /* C4: 261.6 Hz */
-    530, /* D4: 293.7 Hz */
-    472, /* E4: 329.6 Hz */
-    397, /* G4: 392.0 Hz */
-    354, /* A4: 440.0 Hz */
-    297, /* C5: 523.3 Hz */
-    265, /* D5: 587.3 Hz */
-    236  /* E5: 659.3 Hz */
+    595, /* C4: 262.16 Hz actual */
+    530, /* D4: 294.26 Hz actual */
+    472, /* E4: 330.34 Hz actual */
+    397, /* G4: 392.59 Hz actual */
+    354, /* A4: 440.14 Hz actual */
+    297, /* C5: 524.33 Hz actual */
+    265, /* D5: 587.41 Hz actual */
+    236  /* E5: 659.28 Hz actual */
 };
 
 static const uint8_t BPM_PRESETS[4] = { 90, 120, 140, 168 };
@@ -125,6 +137,12 @@ static uint8_t g_bpm_idx  = 1;   /* Default 120 BPM */
 static uint8_t g_beat_sub = 0;   /* 0..3 quarter-note step counter */
 static bool    g_led1_on  = false;
 static bool    g_led2_on  = false;
+
+static void clock_init(void) {
+    /* OSC20M runs at 20 MHz out of reset; apply /4 prescaler for the 5 MHz
+       F_CPU this firmware (tone math, delays, TWI baud) is written for. */
+    _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, CLKCTRL_PDIV_4X_gc | CLKCTRL_PEN_bm);
+}
 
 static void twi0_init(void) {
     /* 100 kHz Standard Mode I2C at 5 MHz peripheral clock */
@@ -206,6 +224,14 @@ static uint8_t scan_multiplexed_buttons(void) {
 }
 
 static void ssd1306_render_status_bar(void) {
+    /* In horizontal addressing mode the GDDRAM cursor keeps marching after
+       each write; reset column 0-31 on page 0 before every bar redraw. */
+    ssd1306_cmd(0x21);
+    ssd1306_cmd(0x00);
+    ssd1306_cmd(0x1F);
+    ssd1306_cmd(0x22);
+    ssd1306_cmd(0x00);
+    ssd1306_cmd(0x00);
     twi0_start_write(SSD1306_I2C_ADDR);
     twi0_write_byte(0x40);
     for (uint8_t col = 0; col < 32; col++) {
@@ -216,28 +242,36 @@ static void ssd1306_render_status_bar(void) {
 }
 
 int main(void) {
+    clock_init();
     twi0_init();
     ssd1306_init();
     tca0_synth_init();
 
     uint16_t tick_counter = 0;
     uint8_t prev_buttons = 0;
+    /* Tactile switches bounce for ~10 ms; ignore repeat edges for 30 ms
+       after an accepted press so one press produces exactly one step. */
+    uint8_t btn_lockout[2] = {0, 0};
 
     while (1) {
         uint8_t buttons = scan_multiplexed_buttons();
         uint8_t rising = buttons & (~prev_buttons);
         prev_buttons = buttons;
 
-        if (rising & 0x01) {
+        if ((rising & 0x01) && !btn_lockout[0]) {
             /* SW1: Advance pentatonic synth pitch */
             g_note_idx = (g_note_idx + 1) & 0x07;
             tca0_set_note(g_note_idx);
             g_led2_on = true;
+            btn_lockout[0] = 30;
         }
-        if (rising & 0x02) {
+        if ((rising & 0x02) && !btn_lockout[1]) {
             /* SW2: Cycle BPM tempo preset (90 / 120 / 140 / 168 BPM) */
             g_bpm_idx = (g_bpm_idx + 1) & 0x03;
+            btn_lockout[1] = 30;
         }
+        if (btn_lockout[0]) btn_lockout[0]--;
+        if (btn_lockout[1]) btn_lockout[1]--;
 
         uint16_t beat_period = (uint16_t)(60000UL / BPM_PRESETS[g_bpm_idx]);
         if (++tick_counter >= beat_period) {

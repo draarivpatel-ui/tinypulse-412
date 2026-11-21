@@ -4,15 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TinyPulse-412 | ATtiny412 8-Pin Pocket Synth &amp; KiCad PCB Inspector</title>
+  <link rel="icon" href="data:," />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="container topbar-inner">
       <div class="brand">
-        <span class="chip-badge">ATtiny412-SSNR (SOIC-8)</span>
         <h1>TinyPulse-412</h1>
-        <span class="subtitle">20 MHz 8-Pin Pocket Chiptune Synth, BPM Metronome &amp; KiCad 8 Hardware Design</span>
       </div>
       <div class="grant-badges">
         <a href="hardware/tinypulse-412-oshpark.zip" class="btn btn-primary" download>Download OSH Park Gerbers (.zip)</a>
@@ -28,7 +27,6 @@
       <div class="card-header">
         <div>
           <h2>Interactive 2-Layer PCB Layout Inspector (38.0 x 25.0 mm)</h2>
-          <p class="muted">1.47 sq in | $7.35 for 3 Boards on OSH Park 2-Layer / After Dark | 6 mil Min Track/Space</p>
         </div>
         <div class="substrate-toggle">
           <label for="themeSelect">Solder Mask Finish:</label>
@@ -39,6 +37,8 @@
           </select>
         </div>
       </div>
+
+      <div class="fact-strip">ATtiny412-SSNR (SOIC-8, 20 MHz) | 1.47 sq in | $7.35 for 3 boards on OSH Park 2-Layer / After Dark | 6 mil min track/space</div>
 
       <div class="layer-controls" role="group" aria-label="PCB Layer Toggles">
         <label class="layer-pill fcu"><input type="checkbox" data-layer="F.Cu" checked /> <span>F.Cu (Top Copper)</span></label>
@@ -78,7 +78,6 @@
       <div class="card-header">
         <div>
           <h2>Live ATtiny412 Register &amp; Audio Simulator</h2>
-          <p class="muted">Cycle-accurate TCA0 Frequency Waveform Generator + Time-Multiplexed PA6/PA7 GPIO</p>
         </div>
         <button id="audioToggleBtn" class="btn btn-accent">Enable WebAudio Synth</button>
       </div>
@@ -112,7 +111,7 @@
         <div class="reg-box">
           <span class="reg-name">TCA0.SINGLE.CMP0</span>
           <code id="regCmp0">0x0162 (354)</code>
-          <span class="reg-desc" id="regFreqDesc">Output: 440.1 Hz (A4)</span>
+          <span class="reg-desc" id="regFreqDesc">Output: 440.14 Hz (A4)</span>
         </div>
         <div class="reg-box">
           <span class="reg-name">TCA0.SINGLE.CTRLB</span>
@@ -163,12 +162,11 @@
     <div class="card-header">
       <div>
         <h2>Verified DigiKey &amp; OSH Park Bill of Materials (3 Complete Boards)</h2>
-        <p class="muted">Compliant with Hack Club 8-Pin Grant ($35.00 max budget) &amp; PCBWay Student Sponsorship</p>
       </div>
       <div class="budget-summary">
-        <div class="stat-pill"><span>Parts (3 Boards):</span> <strong>$16.80</strong></div>
+        <div class="stat-pill"><span>Parts (3 Boards):</span> <strong>$21.60</strong></div>
         <div class="stat-pill"><span>OSH Park PCB (3 Boards):</span> <strong>$7.35</strong></div>
-        <div class="stat-pill highlight"><span>Total Grant Request:</span> <strong id="totalCostDisplay">$24.15 / $35.00</strong></div>
+        <div class="stat-pill highlight"><span>Total Grant Request:</span> <strong id="totalCostDisplay">$28.95 / $35.00</strong></div>
       </div>
     </div>
 

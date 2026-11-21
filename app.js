@@ -3,15 +3,16 @@
  * and Cycle-Accurate ATtiny412 Register / TCA0 Audio Simulator.
  */
 
+/* freqHz is the actual TCA0 output 156250/(CMP0+1), matching hardware + register readout */
 const SCALE_NOTES = [
-  { name: "C4", cmp0: 595, freqHz: 261.6 },
-  { name: "D4", cmp0: 530, freqHz: 293.7 },
-  { name: "E4", cmp0: 472, freqHz: 329.6 },
-  { name: "G4", cmp0: 397, freqHz: 392.0 },
-  { name: "A4", cmp0: 354, freqHz: 440.1 },
-  { name: "C5", cmp0: 297, freqHz: 524.3 },
-  { name: "D5", cmp0: 265, freqHz: 587.4 },
-  { name: "E5", cmp0: 236, freqHz: 659.3 }
+  { name: "C4", cmp0: 595, freqHz: 262.16 },
+  { name: "D4", cmp0: 530, freqHz: 294.26 },
+  { name: "E4", cmp0: 472, freqHz: 330.34 },
+  { name: "G4", cmp0: 397, freqHz: 392.59 },
+  { name: "A4", cmp0: 354, freqHz: 440.14 },
+  { name: "C5", cmp0: 297, freqHz: 524.33 },
+  { name: "D5", cmp0: 265, freqHz: 587.41 },
+  { name: "E5", cmp0: 236, freqHz: 659.28 }
 ];
 
 const BPM_PRESETS = [90, 120, 140, 168];
@@ -27,7 +28,7 @@ const BOM_ITEMS = [
   { ref: "BT1", qty1: 1, qty3: 3, desc: "CR2032 20mm Coin Cell Battery Retainer Holder", mpn: "BS-7", supplier: "DigiKey", pkg: "TH-CR2032", unit: 0.75, ext3: 2.25 },
   { ref: "J1", qty1: 1, qty3: 3, desc: "3-Pin 2.54mm Pitch Vertical UPDI Programming Header", mpn: "PRPC003SAAN-RC", supplier: "DigiKey", pkg: "1x03-2.54mm", unit: 0.25, ext3: 0.75 },
   { ref: "J2", qty1: 1, qty3: 3, desc: "4-Pin 2.54mm Pitch I2C OLED Socket Header", mpn: "PRPC004SAAN-RC", supplier: "DigiKey", pkg: "1x04-2.54mm", unit: 0.35, ext3: 1.05 },
-  { ref: "MOD1", qty1: 1, qty3: 1, desc: "0.96 inch 128x64 SSD1306 I2C OLED Display Module", mpn: "SSD1306-128X64-I2C", supplier: "DigiKey", pkg: "Module-4Pin", unit: 2.40, ext3: 2.40 },
+  { ref: "MOD1", qty1: 1, qty3: 3, desc: "0.96 inch 128x64 SSD1306 I2C OLED Display Module", mpn: "SSD1306-128X64-I2C", supplier: "DigiKey", pkg: "Module-4Pin", unit: 2.40, ext3: 7.20 },
   { ref: "PCB1", qty1: 1, qty3: 3, desc: "OSH Park 2-Layer Purple / After Dark PCB (38.0x25.0mm = 1.47 sq in)", mpn: "TINYPULSE-412-PCB", supplier: "OSH Park", pkg: "38x25mm", unit: 2.45, ext3: 7.35 }
 ];
 
@@ -46,8 +47,8 @@ const PCB_TRACES = [
   { x1: 107.55, y1: 107.0, x2: 109.25, y2: 117.25, width: 0.25, layer: "F.Cu", net: "PA6_BTN1" },
   { x1: 116.3, y1: 113.135, x2: 107.55, y2: 111.0, width: 0.25, layer: "F.Cu", net: "PA7_BTN2" },
   { x1: 107.55, y1: 111.0, x2: 128.75, y2: 117.25, width: 0.25, layer: "B.Cu", net: "PA7_BTN2" },
-  { x1: 109.45, y1: 107.0, x2: 104.45, y2: 107.0, width: 0.25, layer: "F.Cu", net: "PA6_BTN1" },
-  { x1: 109.45, y1: 111.0, x2: 104.45, y2: 111.0, width: 0.25, layer: "F.Cu", net: "PA7_BTN2" }
+  { x1: 109.45, y1: 107.0, x2: 104.45, y2: 107.0, width: 0.25, layer: "F.Cu", net: "LED1_A" },
+  { x1: 109.45, y1: 111.0, x2: 104.45, y2: 111.0, width: 0.25, layer: "F.Cu", net: "LED2_A" }
 ];
 
 const PCB_PADS = [
@@ -77,15 +78,15 @@ const PCB_PADS = [
   { x: 115.45, y: 117.8, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA1_SDA" },
   { x: 122.55, y: 117.8, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA2_SCL" },
   { x: 124.45, y: 117.8, w: 1.0, h: 1.3, layer: "F.Cu", net: "VDD" },
-  /* R3, R4, D1, D2 */
+  /* R3, R4, D1, D2 (anode sides are the separate LED1_A / LED2_A nets in the PCB) */
   { x: 107.55, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA6_BTN1" },
-  { x: 109.45, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA6_BTN1" },
+  { x: 109.45, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "LED1_A" },
   { x: 107.55, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA7_BTN2" },
-  { x: 109.45, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA7_BTN2" },
+  { x: 109.45, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "LED2_A" },
   { x: 102.55, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "GND" },
-  { x: 104.45, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA6_BTN1" },
+  { x: 104.45, y: 107.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "LED1_A" },
   { x: 102.55, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "GND" },
-  { x: 104.45, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "PA7_BTN2" },
+  { x: 104.45, y: 111.0, w: 1.0, h: 1.3, layer: "F.Cu", net: "LED2_A" },
   /* SW1 & SW2 Tactile Switches */
   { x: 102.75, y: 117.25, w: 1.5, h: 1.3, layer: "F.Cu", net: "PA6_BTN1" },
   { x: 109.25, y: 117.25, w: 1.5, h: 1.3, layer: "F.Cu", net: "PA6_BTN1" },
@@ -103,11 +104,17 @@ const PCB_PADS = [
 ];
 
 function computeTca0FrequencyHz(cmp0) {
+  /* CMP0 is a uint16 register; reject non-finite or negative values instead
+     of dividing by zero or returning a meaningless negative frequency. */
+  if (!Number.isFinite(cmp0) || cmp0 < 0) return 0;
   return Number((156250 / (cmp0 + 1)).toFixed(2));
 }
 
 function computeTotalBudgetUsd(bomList = BOM_ITEMS) {
-  return Number(bomList.reduce((acc, item) => acc + item.ext3, 0).toFixed(2));
+  if (!Array.isArray(bomList)) return NaN;
+  return Number(bomList.reduce(
+    (acc, item) => acc + (item && Number.isFinite(item.ext3) ? item.ext3 : 0), 0
+  ).toFixed(2));
 }
 
 if (typeof window !== "undefined" && typeof document !== "undefined") {

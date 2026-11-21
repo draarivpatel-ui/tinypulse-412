@@ -4,7 +4,7 @@
 **Target MCU:** Microchip `ATtiny412-SSNR` (8-Pin SOIC, 20 MHz, 4 KB Flash, 256 B SRAM, UPDI)  
 **Board Dimensions:** `38.0 mm x 25.0 mm` (`1.50 in x 0.98 in` = `1.47 sq in`)  
 **Total Logged Engineering Time:** **9.5 Hours** (across 6 design, routing, firmware, and enclosure sessions)  
-**Total Hardware Budget:** **$24.15 USD** ($7.35 OSH Park 2-Layer PCB + $16.80 DigiKey Components, well under the $35.00 Hack Club 8-Pin Grant limit)
+**Total Hardware Budget:** **$28.95 USD** ($7.35 OSH Park 2-Layer PCB + $21.60 DigiKey Components, well under the $35.00 Hack Club 8-Pin Grant limit)
 
 ---
 
@@ -79,7 +79,7 @@ Plot RS-274X Gerbers and Excellon drill files, verify layer polarity and drill a
 ### Fabrication Outputs
 Generated 7 Gerber layers (`F.Cu`, `B.Cu`, `F.Mask`, `B.Mask`, `F.SilkS`, `B.SilkS`, `Edge.Cuts`) plus the plated through-hole Excellon drill file (`tinypulse-412-PTH.drl`) in `hardware/gerbers/` and packaged two fabrication archives:
 1. `hardware/tinypulse-412-oshpark.zip` - Includes all RS-274X Gerbers, Excellon drill file, and the native `tinypulse-412.kicad_pcb` board file for OSH Park 2-Layer Purple or OSH Park After Dark (black substrate, clear solder mask, copper traces).
-2. `hardware/tinypulse-412-pcbway.zip` - Includes the `PCBWay Sponsored Prototype` vector silkscreen marking on `B.SilkS` (`tinypulse-412-B_SilkS.gbo`) to satisfy the PCBWay Student Sponsorship visual requirement.
+2. `hardware/tinypulse-412-pcbway.zip` - Includes a `PCBWay Sponsored Prototype` sponsorship banner on `B.SilkS` (`tinypulse-412-B_SilkS.gbo`, plotted as a line feature; the full text marking lives in `tinypulse-412.kicad_pcb`) to satisfy the PCBWay Student Sponsorship visual requirement.
 
 ### Full BOM Verification (`hardware/bom.csv`)
 Every component was matched to an in-stock DigiKey Manufacturer Part Number with quantities scaled for building all 3 boards:
@@ -93,9 +93,9 @@ Every component was matched to an in-stock DigiKey Manufacturer Part Number with
 - `BT1`: `BS-7` (Qty 3 @ $0.75 = $2.25)
 - `J1`: `PRPC003SAAN-RC` (Qty 3 @ $0.25 = $0.75)
 - `J2`: `PRPC004SAAN-RC` (Qty 3 @ $0.35 = $1.05)
-- `MOD1`: `SSD1306-128X64-I2C` (Qty 1 @ $2.40 = $2.40)
+- `MOD1`: `SSD1306-128X64-I2C` (Qty 3 @ $2.40 = $7.20)
 - `PCB1`: `TINYPULSE-412-PCB` (3 boards on OSH Park = $7.35)
-- **Grand Total:** **$24.15 USD** ($10.85 below the $35.00 Hack Club 8-Pin Grant ceiling).
+- **Grand Total:** **$28.95 USD** ($6.05 below the $35.00 Hack Club 8-Pin Grant ceiling).
 
 ---
 
