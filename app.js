@@ -125,6 +125,7 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
     noteIdx: 4,
     bpmIdx: 1,
     beatStep: 0,
+    labOverride: null,
     audioEnabled: false,
     audioCtx: null,
     osc: null,
@@ -314,11 +315,19 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
     }
     oledCtx.stroke();
 
-    /* Update Register DOM */
-    document.getElementById("regCmp0").textContent =
-      `0x${note.cmp0.toString(16).toUpperCase().padStart(4, "0")} (${note.cmp0})`;
-    document.getElementById("regFreqDesc").textContent =
-      `Output: ${computeTca0FrequencyHz(note.cmp0)} Hz (${note.name})`;
+    /* Update Register DOM (a lab-loaded note/prescaler overrides the
+       pentatonic readout until the user drives SW1/SW2 again) */
+    if (state.labOverride) {
+      const o = state.labOverride;
+      document.getElementById("regCmp0").textContent = `${o.hex} (${o.cmp0})`;
+      document.getElementById("regFreqDesc").textContent =
+        `Output: ${o.hz.toFixed(2)} Hz (${o.name} @ DIV${o.presc})`;
+    } else {
+      document.getElementById("regCmp0").textContent =
+        `0x${note.cmp0.toString(16).toUpperCase().padStart(4, "0")} (${note.cmp0})`;
+      document.getElementById("regFreqDesc").textContent =
+        `Output: ${computeTca0FrequencyHz(note.cmp0)} Hz (${note.name})`;
+    }
 
     const led1On = state.beatStep === 0;
     const led2On = state.beatStep % 2 === 0;
@@ -376,11 +385,13 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   });
 
   document.getElementById("sw1Btn").addEventListener("click", () => {
+    state.labOverride = null;
     state.noteIdx = (state.noteIdx + 1) % SCALE_NOTES.length;
     renderOledAndRegisters();
   });
 
   document.getElementById("sw2Btn").addEventListener("click", () => {
+    state.labOverride = null;
     state.bpmIdx = (state.bpmIdx + 1) % BPM_PRESETS.length;
     renderOledAndRegisters();
   });
@@ -423,6 +434,30 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   renderPcb();
   renderOledAndRegisters();
   setTimeout(stepMetronome, 500);
+
+  /* ATtiny412 Lab panel (attiny-lab.js UMD module; page degrades gracefully
+     when the script is absent). Mounted after the initial render so a
+     #tplab= hash-restored state wins over the default readout. */
+  if (typeof ATTINY_LAB !== "undefined" && typeof ATTINY_LAB.mount === "function") {
+    const labRoot = document.getElementById("labRoot");
+    if (labRoot) {
+      ATTINY_LAB.mount(labRoot, {
+        onNoteLoad(noteName, row) {
+          const idx = SCALE_NOTES.findIndex(n => n.name === noteName);
+          if (idx >= 0) {
+            state.noteIdx = idx;
+          }
+          /* The register readout always reflects the exact lab-loaded
+             note/prescaler, even outside the shipped 8-note scale. */
+          state.labOverride = {
+            hex: row.hex, cmp0: row.cmp0, hz: row.quantHz,
+            name: noteName, presc: row.presc
+          };
+          renderOledAndRegisters();
+        }
+      });
+    }
+  }
 }
 
 if (typeof module !== "undefined" && module.exports) {
