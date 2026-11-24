@@ -104,17 +104,20 @@ const PCB_PADS = [
 ];
 
 function computeTca0FrequencyHz(cmp0) {
-  /* CMP0 is a uint16 register; reject non-finite or negative values instead
-     of dividing by zero or returning a meaningless negative frequency. */
-  if (!Number.isFinite(cmp0) || cmp0 < 0) return 0;
+  /* CMP0 is an integer uint16 register; reject every out-of-domain value
+     instead of dividing by zero or quantizing a value silicon cannot hold. */
+  if (!Number.isInteger(cmp0) || cmp0 < 0 || cmp0 > 65535) return 0;
   return Number((156250 / (cmp0 + 1)).toFixed(2));
 }
 
 function computeTotalBudgetUsd(bomList = BOM_ITEMS) {
   if (!Array.isArray(bomList)) return NaN;
-  return Number(bomList.reduce(
-    (acc, item) => acc + (item && Number.isFinite(item.ext3) ? item.ext3 : 0), 0
-  ).toFixed(2));
+  let total = 0;
+  for (const item of bomList) {
+    if (!item || !Number.isFinite(item.ext3)) return NaN;
+    total += item.ext3;
+  }
+  return Number(total.toFixed(2));
 }
 
 /* PORTA.OUT mask for the TDM LEDs, mirroring firmware/main.c exactly:

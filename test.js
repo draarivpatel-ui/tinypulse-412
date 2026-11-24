@@ -140,6 +140,10 @@ test("5. ATtiny412 TCA0 frequency synthesizer math and trace design rules are ac
   assert.equal(computeTca0FrequencyHz(-5), 0);
   assert.equal(computeTca0FrequencyHz(Infinity), 0);
   assert.equal(computeTca0FrequencyHz(NaN), 0);
+  assert.equal(computeTca0FrequencyHz(65536), 0);
+  assert.equal(computeTca0FrequencyHz(354.5), 0);
+  assert.equal(computeTca0FrequencyHz("354"), 0);
+  assert.equal(computeTca0FrequencyHz(null), 0);
   assert.equal(SCALE_NOTES.length, 8);
   // The displayed/played frequency must equal the hardware formula output for every note
   for (const n of SCALE_NOTES) {
@@ -151,11 +155,44 @@ test("5. ATtiny412 TCA0 frequency synthesizer math and trace design rules are ac
   }
 });
 
+test("5b. BOM total fails closed on malformed exported rows", () => {
+  assert.equal(computeTotalBudgetUsd(null), NaN);
+  assert.equal(computeTotalBudgetUsd("x"), NaN);
+  assert.equal(computeTotalBudgetUsd([{ ext3: "abc" }]), NaN);
+  assert.equal(computeTotalBudgetUsd([{}]), NaN);
+  assert.equal(computeTotalBudgetUsd([null]), NaN);
+  assert.equal(computeTotalBudgetUsd([{ ext3: 1.235 }]), 1.24);
+});
+
+test("5c. Simulator trace table mirrors every routed KiCad segment exactly", () => {
+  const pcb = fs.readFileSync(path.join(ROOT, "hardware", "tinypulse-412.kicad_pcb"), "utf8");
+  const netNames = new Map([...pcb.matchAll(/\(net (\d+) "([^"]*)"\)/g)].map(m => [m[1], m[2]]));
+  const segments = [...pcb.matchAll(/\(segment \(start ([\d.]+) ([\d.]+)\) \(end ([\d.]+) ([\d.]+)\) \(width ([\d.]+)\) \(layer "([^"]+)"\) \(net (\d+)\)/g)]
+    .map(m => ({ x1: Number(m[1]), y1: Number(m[2]), x2: Number(m[3]), y2: Number(m[4]), width: Number(m[5]), layer: m[6], net: netNames.get(m[7]) }));
+  assert.equal(PCB_TRACES.length, segments.length, "simulator and PCB must have the same segment count");
+  assert.deepEqual(PCB_TRACES, segments, "simulator PCB_TRACES drifted from tinypulse-412.kicad_pcb");
+});
+
+test("5d. Static BOM cost copy agrees with the computed BOM total", () => {
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const parts = BOM_ITEMS.filter(item => item.ref !== "PCB1").reduce((sum, item) => sum + item.ext3, 0);
+  const pcb = BOM_ITEMS.find(item => item.ref === "PCB1").ext3;
+  assert.equal(parts.toFixed(2), "21.60");
+  assert.equal(pcb.toFixed(2), "7.35");
+  assert.ok(html.includes("$21.60"), "index.html parts cost drifted from BOM_ITEMS");
+  assert.ok(html.includes("$7.35"), "index.html PCB cost drifted from BOM_ITEMS");
+  assert.ok(html.includes("$28.95 / $35.00"), "index.html total cost drifted from BOM_ITEMS");
+});
+
 test("6. Firmware registers the 5 MHz clock prescaler, debounces buttons, and addresses the OLED bar", () => {
   const fw = fs.readFileSync(path.join(ROOT, "firmware", "main.c"), "utf8");
   // ATtiny412 boots at 20 MHz; the firmware's math assumes F_CPU = 5 MHz
   assert.match(fw, /_PROTECTED_WRITE\(CLKCTRL\.MCLKCTRLB,\s*CLKCTRL_PDIV_4X_gc\s*\|\s*CLKCTRL_PEN_bm\)/,
     "main() must select the /4 prescaler so F_CPU actually is 5 MHz");
+  assert.match(fw, /#define CLKCTRL_PDIV_4X_gc \(0x01 << 1\)/,
+    "host simulation must use the datasheet PDIV=4 bit encoding");
+  const makefile = fs.readFileSync(path.join(ROOT, "firmware", "Makefile"), "utf8");
+  assert.match(makefile, /F_CPU\s*=\s*5000000UL/, "Makefile F_CPU must match the firmware and lab clock");
   assert.match(fw, /clock_init\(\);/, "clock_init must be called in main");
   assert.match(fw, /btn_lockout/, "button scan needs a debounce lockout");
   // Status-bar redraws must reset the GDDRAM cursor in horizontal addressing mode

@@ -30,7 +30,7 @@ The live workbench ships a zero-dependency UMD lab module (`attiny-lab.js`, iden
 - **Fail-Closed `#tplab=` Codec:** hostile input rejects to defaults; out-of-range numerics clamp into bounds; full state restores across `Page.reload()`.
 - **In-Page Self-Tests:** 29 deterministic checks run live in the panel on mount.
 
-The automated verification suite (`test.js`) runs **392 tests** (0 failures): every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
+The automated verification suite (`test.js`) runs **396 tests** (0 failures): every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
 
 ---
 
@@ -59,7 +59,7 @@ tinypulse-412/
 ├── style.css                            # Dark Engineering Workbench UI Styles
 ├── app.js                               # Canvas Gerber/PCB Renderer + WebAudio TCA0 Synth Engine
 ├── attiny-lab.js                        # UMD Lab: TCA0 Registers, CR2032 Budget, SHA-256 Proof, #tplab= Codec
-└── test.js                              # Automated Node.js Verification Suite (392 tests: KiCad, Gerbers, BOM, Lab)
+└── test.js                              # Automated Node.js Verification Suite (396 tests: KiCad, Gerbers, BOM, Lab)
 ```
 
 ---

@@ -96,7 +96,7 @@ static TWI_t TWI0;
 static CLKCTRL_t CLKCTRL;
 #define _PROTECTED_WRITE(reg, val) ((reg) = (val))
 #define CLKCTRL_PEN_bm 0x01
-#define CLKCTRL_PDIV_4X_gc (0x02 << 1)
+#define CLKCTRL_PDIV_4X_gc (0x01 << 1)
 #define PORT_PULLUPEN_bm 0x08
 #define TCA_SINGLE_CLKSEL_DIV16_gc (0x04 << 1)
 #define TCA_SINGLE_ENABLE_bm 0x01
