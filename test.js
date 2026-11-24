@@ -9,7 +9,8 @@ const {
   BOM_ITEMS,
   PCB_TRACES,
   computeTca0FrequencyHz,
-  computeTotalBudgetUsd
+  computeTotalBudgetUsd,
+  computePortaOutMask
 } = require("./app.js");
 
 const L = require("./attiny-lab.js");
@@ -160,6 +161,24 @@ test("6. Firmware registers the 5 MHz clock prescaler, debounces buttons, and ad
   // Status-bar redraws must reset the GDDRAM cursor in horizontal addressing mode
   assert.match(fw, /ssd1306_cmd\(0x21\)/, "status bar must set the column address window");
   assert.match(fw, /ssd1306_cmd\(0x22\)/, "status bar must set the page address window");
+});
+
+test("6b. Simulator D1/D2 LEDs and PORTA.OUT mask mirror the firmware beat logic exactly", () => {
+  const fw = fs.readFileSync(path.join(ROOT, "firmware", "main.c"), "utf8");
+  // Firmware: D1 flashes only the downbeat, D2 gates the off-beats.
+  assert.match(fw, /g_led1_on\s*=\s*\(g_beat_sub\s*==\s*0\)/,
+    "firmware D1 must flash on g_beat_sub == 0 only");
+  assert.match(fw, /g_led2_on\s*=\s*\(g_beat_sub\s*&\s*0x01\)/,
+    "firmware D2 must gate odd beats via g_beat_sub & 1");
+  // PA6 -> D1 is bit 0x40, PA7 -> D2 is bit 0x80 in PORTA.OUT.
+  const expected = [0x40, 0x80, 0x00, 0x80];
+  for (let beat = 0; beat < 4; beat++) {
+    assert.equal(computePortaOutMask(beat), expected[beat],
+      `beat ${beat}: sim OUT mask 0x${computePortaOutMask(beat).toString(16)} != firmware LED state`);
+  }
+  // Wrap-around and negative steps stay inside the 4-beat domain.
+  assert.equal(computePortaOutMask(4), 0x40);
+  assert.equal(computePortaOutMask(-1), 0x80);
 });
 
 test("7. Shipped Gerbers flash every pad and draw every track in the KiCad PCB", () => {

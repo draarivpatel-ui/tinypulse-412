@@ -117,6 +117,14 @@ function computeTotalBudgetUsd(bomList = BOM_ITEMS) {
   ).toFixed(2));
 }
 
+/* PORTA.OUT mask for the TDM LEDs, mirroring firmware/main.c exactly:
+   D1 (PA6, bit 0x40) flashes only on the downbeat (g_beat_sub == 0);
+   D2 (PA7, bit 0x80) gates on the off-beats (g_beat_sub & 1). */
+function computePortaOutMask(beatStep) {
+  const step = ((beatStep % 4) + 4) % 4;
+  return (step === 0 ? 0x40 : 0x00) | ((step & 1) ? 0x80 : 0x00);
+}
+
 if (typeof window !== "undefined" && typeof document !== "undefined") {
   const state = {
     theme: "afterdark",
@@ -329,12 +337,11 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
         `Output: ${computeTca0FrequencyHz(note.cmp0)} Hz (${note.name})`;
     }
 
-    const led1On = state.beatStep === 0;
-    const led2On = state.beatStep % 2 === 0;
+    const outMask = computePortaOutMask(state.beatStep);
+    const led1On = (outMask & 0x40) !== 0;
+    const led2On = (outMask & 0x80) !== 0;
     document.getElementById("led1Bulb").classList.toggle("on", led1On);
     document.getElementById("led2Bulb").classList.toggle("on", led2On);
-
-    const outMask = (led1On ? 0x40 : 0x00) | (led2On ? 0x80 : 0x00);
     document.getElementById("regPorta").textContent =
       `DIR=0xC8 OUT=0x${outMask.toString(16).toUpperCase().padStart(2, "0")}`;
 
@@ -468,6 +475,7 @@ if (typeof module !== "undefined" && module.exports) {
     PCB_TRACES,
     PCB_PADS,
     computeTca0FrequencyHz,
-    computeTotalBudgetUsd
+    computeTotalBudgetUsd,
+    computePortaOutMask
   };
 }
