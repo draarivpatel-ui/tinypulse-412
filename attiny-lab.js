@@ -1007,10 +1007,24 @@
       tbody.innerHTML = html;
     }
 
+    function compactChartLayout() {
+      return typeof window !== "undefined"
+        && typeof window.matchMedia === "function"
+        && window.matchMedia("(max-width: 640px)").matches;
+    }
+
     function renderCentsChart() {
       var svg = rootEl.querySelector("#labCentsChart");
-      var W = 720, H = 270, L = 48, R = 12, T = 16, B = 34;
+      var compact = compactChartLayout();
+      var W = compact ? 360 : 720;
+      var H = compact ? 500 : 270;
+      var L = compact ? 82 : 48;
+      var R = compact ? 18 : 12;
+      var T = compact ? 18 : 16;
+      var B = compact ? 42 : 34;
       var iw = W - L - R, ih = H - T - B;
+      var hitR = compact ? 14 : 10;
+      svg.setAttribute("viewBox", "0 0 " + W + " " + H);
       var maxC = 5;
       for (var ni = 0; ni < NOTES.length; ni++) {
         for (var pi = 0; pi < PRESCALERS.length; pi++) {
@@ -1019,23 +1033,43 @@
         }
       }
       maxC *= 1.15;
-      var x = function (i) { return L + iw * i / (NOTES.length - 1); };
-      var y = function (c) { return T + ih / 2 - (c / maxC) * (ih / 2); };
+      var x = compact
+        ? function (c) { return L + iw / 2 + (c / maxC) * (iw / 2); }
+        : function (i) { return L + iw * i / (NOTES.length - 1); };
+      var y = compact
+        ? function (i) { return T + ih * i / (NOTES.length - 1); }
+        : function (c) { return T + ih / 2 - (c / maxC) * (ih / 2); };
       var out = [];
-      out.push('<line x1="' + L + '" y1="' + y(0) + '" x2="' + (W - R) + '" y2="' + y(0) + '" stroke="#3b4b6b" stroke-width="1"/>');
       var grid = Math.ceil(maxC / 2);
-      for (var g = -grid; g <= grid; g += Math.ceil(grid / 3)) {
-        if (g === 0) continue;
-        var gy = y(g);
-        if (gy < T || gy > T + ih) continue;
-        out.push('<line x1="' + L + '" y1="' + gy + '" x2="' + (W - R) + '" y2="' + gy + '" stroke="#1e293b" stroke-width="1"/>');
-        out.push('<text x="' + (L - 6) + '" y="' + (gy + 3) + '" text-anchor="end" class="lab-axis">' + g + "</text>");
+      var g, gy, gx, i;
+      if (compact) {
+        out.push('<line x1="' + x(0) + '" y1="' + T + '" x2="' + x(0) + '" y2="' + (T + ih) + '" stroke="#3b4b6b" stroke-width="1"/>');
+        for (g = -grid; g <= grid; g += Math.ceil(grid / 3)) {
+          if (g === 0) continue;
+          gx = x(g);
+          if (gx < L || gx > L + iw) continue;
+          out.push('<line x1="' + gx + '" y1="' + T + '" x2="' + gx + '" y2="' + (T + ih) + '" stroke="#1e293b" stroke-width="1"/>');
+          out.push('<text x="' + gx + '" y="' + (H - 22) + '" text-anchor="middle" class="lab-axis">' + g + "</text>");
+        }
+        for (i = 0; i < NOTES.length; i++) {
+          out.push('<text x="' + (L - 6) + '" y="' + (y(i) + 3) + '" text-anchor="end" class="lab-axis">' + esc(NOTES[i].name) + "</text>");
+        }
+        out.push('<text x="' + x(0) + '" y="' + (H - 8) + '" text-anchor="middle" class="lab-axis">cents error</text>');
+      } else {
+        out.push('<line x1="' + L + '" y1="' + y(0) + '" x2="' + (W - R) + '" y2="' + y(0) + '" stroke="#3b4b6b" stroke-width="1"/>');
+        for (g = -grid; g <= grid; g += Math.ceil(grid / 3)) {
+          if (g === 0) continue;
+          gy = y(g);
+          if (gy < T || gy > T + ih) continue;
+          out.push('<line x1="' + L + '" y1="' + gy + '" x2="' + (W - R) + '" y2="' + gy + '" stroke="#1e293b" stroke-width="1"/>');
+          out.push('<text x="' + (L - 6) + '" y="' + (gy + 3) + '" text-anchor="end" class="lab-axis">' + g + "</text>");
+        }
+        for (i = 0; i < NOTES.length; i++) {
+          out.push('<text x="' + x(i) + '" y="' + (H - 14) + '" text-anchor="middle" class="lab-axis">' + esc(NOTES[i].name) + "</text>");
+        }
+        out.push('<text x="' + (L - 6) + '" y="' + (y(0) + 3) + '" text-anchor="end" class="lab-axis">0</text>');
+        out.push('<text x="' + (L - 38) + '" y="' + (T + 4) + '" class="lab-axis">cents</text>');
       }
-      for (var i = 0; i < NOTES.length; i++) {
-        out.push('<text x="' + x(i) + '" y="' + (H - 14) + '" text-anchor="middle" class="lab-axis">' + esc(NOTES[i].name) + "</text>");
-      }
-      out.push('<text x="' + (L - 6) + '" y="' + (y(0) + 3) + '" text-anchor="end" class="lab-axis">0</text>');
-      out.push('<text x="' + (L - 38) + '" y="' + (T + 4) + '" class="lab-axis">cents</text>');
 
       var labels = [];
       for (var p = 0; p < PRESCALERS.length; p++) {
@@ -1043,23 +1077,24 @@
         if (!seriesOn[presc]) continue;
         var col = SERIES_COLORS[p];
         var pts = [];
-        var worst = { i: -1, v: -1 };
+        var worst = { i: -1, v: -1, c: 0 };
         for (var nn = 0; nn < NOTES.length; nn++) {
           var rr = cmp0For(NOTES[nn].idealHz, presc);
-          pts.push(x(nn) + "," + y(rr.centsErr));
+          pts.push((compact ? x(rr.centsErr) : x(nn)) + "," + (compact ? y(nn) : y(rr.centsErr)));
           if (rr.absCents > worst.v) worst = { i: nn, v: rr.absCents, c: rr.centsErr };
         }
         out.push('<polyline points="' + pts.join(" ") + '" fill="none" stroke="' + col + '" stroke-width="1.6" opacity="0.85"/>');
         for (var m = 0; m < NOTES.length; m++) {
           var rm = cmp0For(NOTES[m].idealHz, presc);
-          var cx = x(m), cy = y(rm.centsErr);
+          var cx = compact ? x(rm.centsErr) : x(m);
+          var cy = compact ? y(m) : y(rm.centsErr);
           var selCls = (m === state.note && presc === state.presc) ? " lab-pt-sel" : "";
           out.push('<g class="lab-hit' + selCls + '" tabindex="0" role="button" data-note="' + m + '" data-presc="' + presc
             + '" aria-label="Load ' + esc(NOTES[m].name) + ' DIV' + presc + '">'
-            + '<circle cx="' + cx + '" cy="' + cy + '" r="10" fill="transparent"/>'
+            + '<circle cx="' + cx + '" cy="' + cy + '" r="' + hitR + '" fill="transparent"/>'
             + '<circle cx="' + cx + '" cy="' + cy + '" r="3.2" fill="' + col + '"/></g>');
         }
-        if (worst.i >= 0) labels.push({ x: x(worst.i), y: y(worst.c), text: (worst.c >= 0 ? "+" : "") + worst.c.toFixed(1) + "c", col: col });
+        if (!compact && worst.i >= 0) labels.push({ x: x(worst.i), y: y(worst.c), text: (worst.c >= 0 ? "+" : "") + worst.c.toFixed(1) + "c", col: col });
       }
       labels.sort(function (a, b) { return a.y - b.y; });
       for (var li = 1; li < labels.length; li++) {
@@ -1069,7 +1104,7 @@
       }
       for (var lj = 0; lj < labels.length; lj++) {
         var lb = labels[lj];
-        var ly = lb.y;
+        var ly = lb.y + (lb.y < T + ih / 2 ? -10 : 12);
         if (ly < T + 8) ly = T + 8;
         if (ly > T + ih - 4) ly = T + ih - 4;
         out.push('<text x="' + lb.x + '" y="' + ly + '" text-anchor="middle" class="lab-slabel" fill="' + lb.col + '">' + lb.text + "</text>");
@@ -1079,36 +1114,65 @@
 
     function renderPowerChart() {
       var svg = rootEl.querySelector("#labPowerChart");
-      var W = 720, H = 250, L = 52, R = 12, T = 16, B = 54;
+      var compact = compactChartLayout();
+      var W = compact ? 360 : 720;
+      var H = compact ? 320 : 250;
+      var L = compact ? 84 : 52;
+      var R = compact ? 18 : 12;
+      var T = compact ? 14 : 16;
+      var B = compact ? 34 : 54;
       var iw = W - L - R, ih = H - T - B;
+      svg.setAttribute("viewBox", "0 0 " + W + " " + H);
       var cols = powerSweep(state);
       var maxMa = 0.001;
       for (var i = 0; i < cols.length; i++) { if (cols[i].ma > maxMa) maxMa = cols[i].ma; }
       maxMa *= 1.12;
-      var cw = iw / cols.length;
       var out = [];
       var gridSteps = 4;
-      for (var g = 0; g <= gridSteps; g++) {
-        var gv = maxMa * g / gridSteps;
-        var gy = T + ih - ih * g / gridSteps;
-        out.push('<line x1="' + L + '" y1="' + gy + '" x2="' + (W - R) + '" y2="' + gy + '" stroke="#1e293b" stroke-width="1"/>');
-        out.push('<text x="' + (L - 6) + '" y="' + (gy + 3) + '" text-anchor="end" class="lab-axis">' + (gv < 1 ? gv.toFixed(2) : gv.toFixed(1)) + "</text>");
+      var g, gv, gx, gy;
+      for (g = 0; g <= gridSteps; g++) {
+        gv = maxMa * g / gridSteps;
+        if (compact) {
+          gx = L + iw * g / gridSteps;
+          out.push('<line x1="' + gx + '" y1="' + T + '" x2="' + gx + '" y2="' + (T + ih) + '" stroke="#1e293b" stroke-width="1"/>');
+          out.push('<text x="' + gx + '" y="' + (H - 14) + '" text-anchor="middle" class="lab-axis">' + (gv < 1 ? gv.toFixed(2) : gv.toFixed(1)) + "</text>");
+        } else {
+          gy = T + ih - ih * g / gridSteps;
+          out.push('<line x1="' + L + '" y1="' + gy + '" x2="' + (W - R) + '" y2="' + gy + '" stroke="#1e293b" stroke-width="1"/>');
+          out.push('<text x="' + (L - 6) + '" y="' + (gy + 3) + '" text-anchor="end" class="lab-axis">' + (gv < 1 ? gv.toFixed(2) : gv.toFixed(1)) + "</text>");
+        }
       }
-      out.push('<text x="' + (L - 40) + '" y="' + (T + 4) + '" class="lab-axis">mA</text>');
+      out.push('<text x="' + (compact ? L + iw / 2 : L - 40) + '" y="' + (compact ? H - 2 : T + 4) + '" text-anchor="' + (compact ? "middle" : "start") + '" class="lab-axis">mA</text>');
+      var compactNames = ["Sleep", "Met 60", "Met now", "Met 240", "Synth", "Synth max"];
+      var rowH = ih / cols.length;
       for (var c = 0; c < cols.length; c++) {
         var col = cols[c];
-        var cx = L + cw * c;
-        var bh = Math.max(1, ih * (col.ma / maxMa));
         var active = col.mode === state.mode && (col.bpm === null || col.id === "metcur");
         var barCol = col.mode === 0 ? "#4ade80" : (col.mode === 1 ? "#38bdf8" : "#fb923c");
-        out.push('<g class="lab-hit' + (active ? " lab-pt-sel" : "") + '" tabindex="0" role="button" data-col="' + c
-          + '" aria-label="Load ' + esc(col.label) + '">'
-          + '<rect x="' + cx + '" y="' + T + '" width="' + cw + '" height="' + ih + '" fill="transparent"/>'
-          + '<rect x="' + (cx + 8) + '" y="' + (T + ih - bh) + '" width="' + (cw - 16) + '" height="' + bh
-          + '" fill="' + barCol + '" opacity="' + (active ? "0.95" : "0.6") + '"/></g>');
-        out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih - bh - 5) + '" text-anchor="middle" class="lab-slabel">' + fmtMa(col.ma) + "</text>");
-        out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih + 15) + '" text-anchor="middle" class="lab-axis">' + esc(col.label) + "</text>");
-        out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih + 30) + '" text-anchor="middle" class="lab-axis">' + fmtHours(col.hours) + "</text>");
+        if (compact) {
+          var ry = T + rowH * c;
+          var bw = Math.max(2, iw * (col.ma / maxMa));
+          var cy = ry + rowH / 2;
+          out.push('<g class="lab-hit' + (active ? " lab-pt-sel" : "") + '" tabindex="0" role="button" data-col="' + c
+            + '" aria-label="Load ' + esc(col.label) + '">'
+            + '<rect x="' + L + '" y="' + ry + '" width="' + iw + '" height="' + rowH + '" fill="transparent"/>'
+            + '<rect x="' + L + '" y="' + (ry + 5) + '" width="' + bw + '" height="' + Math.max(8, rowH * 0.48)
+            + '" fill="' + barCol + '" opacity="' + (active ? "0.95" : "0.6") + '"/></g>');
+          out.push('<text x="' + (L - 6) + '" y="' + (cy + 3) + '" text-anchor="end" class="lab-axis">' + esc(compactNames[c] || col.label) + "</text>");
+          out.push('<text x="' + (L + 4) + '" y="' + (ry + rowH - 7) + '" class="lab-axis">' + fmtMa(col.ma) + " | " + fmtHours(col.hours) + "</text>");
+        } else {
+          var cw = iw / cols.length;
+          var cx = L + cw * c;
+          var bh = Math.max(1, ih * (col.ma / maxMa));
+          out.push('<g class="lab-hit' + (active ? " lab-pt-sel" : "") + '" tabindex="0" role="button" data-col="' + c
+            + '" aria-label="Load ' + esc(col.label) + '">'
+            + '<rect x="' + cx + '" y="' + T + '" width="' + cw + '" height="' + ih + '" fill="transparent"/>'
+            + '<rect x="' + (cx + 8) + '" y="' + (T + ih - bh) + '" width="' + (cw - 16) + '" height="' + bh
+            + '" fill="' + barCol + '" opacity="' + (active ? "0.95" : "0.6") + '"/></g>');
+          out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih - bh - 5) + '" text-anchor="middle" class="lab-slabel">' + fmtMa(col.ma) + "</text>");
+          out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih + 15) + '" text-anchor="middle" class="lab-axis">' + esc(col.label) + "</text>");
+          out.push('<text x="' + (cx + cw / 2) + '" y="' + (T + ih + 30) + '" text-anchor="middle" class="lab-axis">' + fmtHours(col.hours) + "</text>");
+        }
       }
       svg.innerHTML = out.join("");
     }
@@ -1257,6 +1321,15 @@
     window.addEventListener("hashchange", function () {
       var d = decodeHash(location.hash);
       if (d.ok) setState(d.state, true);
+    });
+
+    var compactLayout = compactChartLayout();
+    window.addEventListener("resize", function () {
+      var nextCompact = compactChartLayout();
+      if (nextCompact !== compactLayout) {
+        compactLayout = nextCompact;
+        renderAll();
+      }
     });
 
     renderAll();
