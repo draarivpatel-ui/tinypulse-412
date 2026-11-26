@@ -34,7 +34,7 @@ The live workbench ships a zero-dependency UMD lab module (`attiny-lab.js`, iden
 - **Fail-Closed `#tplab=` Codec:** hostile input rejects to defaults; out-of-range numerics clamp into bounds; full state restores across `Page.reload()`.
 - **In-Page Self-Tests:** 29 deterministic checks run live in the panel on mount.
 
-The automated verification suite runs **398 tests** (0 failures) across `test.js` and `batch6-hardening.test.mjs`: every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
+The automated verification suite runs **399 tests** (0 failures) across `test.js` and `batch6-hardening.test.mjs`: every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
 
 ---
 
