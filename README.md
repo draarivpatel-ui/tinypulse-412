@@ -7,6 +7,10 @@
 
 ---
 
+> **Fabrication status: not fabrication-ready.** A static copper audit on 2026-11-25 found split power/ground islands and back-copper segments that begin at top-only SMD pads without vias. Do not upload either Gerber zip until the copper is rerouted and independently revalidated. The archives are retained only as generated layout evidence.
+
+---
+
 ## Project Overview
 
 **TinyPulse-412** is a pocket-sized chiptune square-wave synthesizer, musician's visual/audio BPM metronome, and hardware I2C OLED status engine built around the 8-pin **Microchip `ATtiny412-SSNR`** microcontroller.
@@ -30,7 +34,7 @@ The live workbench ships a zero-dependency UMD lab module (`attiny-lab.js`, iden
 - **Fail-Closed `#tplab=` Codec:** hostile input rejects to defaults; out-of-range numerics clamp into bounds; full state restores across `Page.reload()`.
 - **In-Page Self-Tests:** 29 deterministic checks run live in the panel on mount.
 
-The automated verification suite (`test.js`) runs **396 tests** (0 failures): every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
+The automated verification suite (`test.js`) runs **397 tests** (0 failures): every shipped KiCad/Gerber/BOM/STL/firmware check plus the full lab contract (SHA-256 KATs and a 0..160 byte boundary sweep vs Node `crypto`, canonicalizer cycle/depth/key-order cases, all 102 register rows vs the firmware formula, power/runtime monotonicity, pin-map invariants, CSV escaping, digest parity, tamper rejection, hostile codec probes, and DOM wiring).
 
 ---
 
@@ -43,8 +47,8 @@ tinypulse-412/
 │   ├── tinypulse-412.kicad_sch          # KiCad 8 S-Expression Schematic
 │   ├── tinypulse-412.kicad_pcb          # KiCad 8 2-Layer PCB Layout (38.0 x 25.0 mm)
 │   ├── bom.csv                          # Verified DigiKey & OSH Park BOM (28.95 USD total for 3x)
-│   ├── tinypulse-412-oshpark.zip        # Ready-to-upload OSH Park 2-Layer / After Dark Archive
-│   ├── tinypulse-412-pcbway.zip         # Ready-to-upload PCBWay Sponsorship Gerber Archive
+│   ├── tinypulse-412-oshpark.zip        # Generated OSH Park archive - not fabrication-ready
+│   ├── tinypulse-412-pcbway.zip         # Generated PCBWay archive - not fabrication-ready
 │   └── gerbers/                         # Individual RS-274X Gerbers (.gtl/.gbl/.gts/.gbs/.gto/.gbo/.gm1) & .drl
 ├── firmware/
 │   ├── main.c                           # Bare-Metal AVR-GCC C11 Firmware (TCA0 PWM, TWI0 OLED, TDM GPIO)
@@ -59,7 +63,7 @@ tinypulse-412/
 ├── style.css                            # Dark Engineering Workbench UI Styles
 ├── app.js                               # Canvas Gerber/PCB Renderer + WebAudio TCA0 Synth Engine
 ├── attiny-lab.js                        # UMD Lab: TCA0 Registers, CR2032 Budget, SHA-256 Proof, #tplab= Codec
-└── test.js                              # Automated Node.js Verification Suite (396 tests: KiCad, Gerbers, BOM, Lab)
+└── test.js                              # Automated Node.js Verification Suite (397 tests: KiCad, Gerbers, BOM, Lab)
 ```
 
 ---

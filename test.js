@@ -930,3 +930,10 @@ test("viewport meta is present for mobile audits", () => {
   const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   assert.match(html, /<meta name="viewport"/);
 });
+
+test("11. Fabrication status warning prevents accidental upload of unrouted copper", () => {
+  const readme = fs.readFileSync(path.join(ROOT, "README.md"), "utf8");
+  assert.match(readme, /Fabrication status: not fabrication-ready/);
+  assert.match(readme, /split power\/ground islands/);
+  assert.match(readme, /Do not upload either Gerber zip/);
+});
