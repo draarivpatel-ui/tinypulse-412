@@ -724,7 +724,7 @@ test("CSV export stamps digest row and escapes every cell", () => {
 test("CSV formula-injection escaping covers = + - @ tab CR", () => {
   assert.equal(L.csvEscape("=1+1"), "'=1+1");
   assert.equal(L.csvEscape("+5"), "'+5");
-  assert.equal(L.csvEscape("-7"), "'-7");
+  assert.equal(L.csvEscape("-7"), "-7");
   assert.equal(L.csvEscape("@sum"), "'@sum");
   assert.equal(L.csvEscape("\thit"), "'\thit");
   assert.equal(L.csvEscape("\rhit"), "\"'\rhit\"");

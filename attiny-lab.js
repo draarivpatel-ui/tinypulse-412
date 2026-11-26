@@ -568,7 +568,10 @@
 
   function csvEscape(cell) {
     var s = String(cell === undefined || cell === null ? "" : cell);
-    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    var lead = (/^[\s\p{Cf}\p{Cc}]*/u.exec(s) || [""])[0];
+    var first = s.charAt(lead.length);
+    var plainNumber = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(s.slice(lead.length));
+    if (lead.length > 0 || (first !== "" && "=+-@".indexOf(first) !== -1 && !(first === "-" && plainNumber))) s = "'" + s;
     if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
     return s;
   }
@@ -756,7 +759,7 @@
     chk("csv-escape", "CSV formula-injection escaping", function () {
       return csvEscape("=1+1") === "'=1+1"
         && csvEscape("+2") === "'+2"
-        && csvEscape("-3") === "'-3"
+        && csvEscape("-3") === "-3"
         && csvEscape("@x") === "'@x"
         && csvEscape("\tc") === "'\tc"
         && csvEscape("plain") === "plain"
